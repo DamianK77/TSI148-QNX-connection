@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <sys/neutrino.h>
 #include <string.h>
+#include <pci_comms.h>
 
 #define BASE_ADDRESS_L_OFFSET 0x10
 #define BASE_ADDRESS_H_OFFSET 0x14
