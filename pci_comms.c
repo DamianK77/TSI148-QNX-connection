@@ -3,13 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/neutrino.h>
-#include <tsi_struct.h>
+#include <tsi_mapping.h>
 #include <string.h>
 #include <pci_comms.h>
 
 #define BASE_ADDRESS_L_OFFSET 0x10
 #define BASE_ADDRESS_H_OFFSET 0x14
 #define INTERRUPT_LINE_OFFSET 0x3C
+#define CRG_SIZE 0x1000
 
 int read_TSI148_pci_config(uint64_t *pci_config_base_address, uint8_t *pci_interrupt_line);
 
@@ -24,6 +25,17 @@ int main(void) {
 
     printf("Base Address: 0x%lX\n", pci_config_base_address);
     printf("Interrupt Line: %u\n", pci_interrupt_line);
+
+    // memory mapping test
+    // void *memory_mapped = map_tsi148_registers(pci_config_base_address, CRG_SIZE);
+    // if (!memory_mapped) {
+    //     printf("Failed to map memory\n");
+    //     return 1;
+    // }
+    // uint32_t *devi_veni = (uint32_t *)((uintptr_t)memory_mapped + DEVI_VENI_OFFSET)
+    // uint32_t value = read_register(devi_veni);
+    // printf("Read value from DEVI/VENI Register : 0x%08X\n", value);
+    // unmap_tsi148_registers(memory_mapped, CRG_SIZE);
 
     return EXIT_SUCCESS;
 }
@@ -78,24 +90,13 @@ int read_TSI148_pci_config(uint64_t *pci_config_base_address, uint8_t *pci_inter
         /* Read interrupt line from PCI configuration space */
         pci_read_config8(inf.BusNumber, inf.DevFunc, INTERRUPT_LINE_OFFSET, 1, pci_interrupt_line);
 
-        // memory mapping test
-        // void *memory_mapped = map_tsi148_registers(BASE_ADDR_CRG, CRG_SIZE);
-        // if (!memory_mapped) {
-        //     printf("Failed to map memory\n");
-        //     return 1;
-        // }
-        // uint32_t *devi_veni = (uint32_t *)((uintptr_t)memory_mapped + DEVI_VENI_OFFSET)
-        // uint32_t value = read_register(devi_veni);
-        // printf("Read value from DEVI/VENI Register : 0x%08X\n", value);
-        // unmap_tsi148_registers(memory_mapped, CRG_SIZE);
+        *pci_config_base_address = ((uint64_t)pci_config_base_buffH << 32) | pci_config_base_buffL;
 
         pci_detach_device( hdl );
     }
 
     /* Disconnect from the PCI server */
     pci_detach(phdl);
-
-    *pci_config_base_address = ((uint64_t)pci_config_base_buffH << 32) | pci_config_base_buffL;
 
     return 0;
 }

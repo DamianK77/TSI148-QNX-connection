@@ -1,5 +1,5 @@
-#ifndef TSI_STRUCT_H
-#define TSI_STRUCT_H
+#ifndef TSI_MAPPING_H
+#define TSI_MAPPING_H
 
 #include <sys/mman.h>
 #include <sys/neutrino.h>
