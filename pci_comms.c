@@ -26,13 +26,18 @@ int main(void) {
     return EXIT_SUCCESS;
 }
 
+/// @brief Read TSI148 PCI configuration, writes to pci_config_base_address and pci_interrupt_line.
+/// @param pci_config_base_address pointer to uint64_t variable to store base address
+/// @param pci_interrupt_line pointer to uint8_t variable to store interrupt line
+/// @return 
 int read_TSI148_pci_config(uint64_t *pci_config_base_address, uint8_t *pci_interrupt_line) {
-    int pidx;
-    void *hdl;
-    int phdl;
-    struct pci_dev_info inf;
-    uint32_t pci_config_base_buffL = 0;
-    uint32_t pci_config_base_buffH = 0;
+    
+    int pidx; // PCI device index
+    void *hdl; // PCI device handle
+    int phdl; // PCI handle
+    struct pci_dev_info inf; // PCI device info structure
+    uint32_t pci_config_base_buffL = 0; // PCI configuration base address buffer
+    uint32_t pci_config_base_buffH = 0; // PCI configuration base address buffer
 
     // root access
     if (ThreadCtl(_NTO_TCTL_IO, NULL) == -1) {
