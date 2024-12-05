@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#define BASE_ADDR_CRG 0x0101 // change later to proper address
+
 #define CRG_SIZE 0x1000 // 4 Kbyte size 
 
 // -----------------------------
@@ -85,11 +85,6 @@ static inline void write_register(uint32_t *addr, uint32_t value) {
 // Registers offsets from CRG
 // -----------------------------
 #define DEVI_VENI_OFFSET 0x000
-#define STAT_SMMD_OFFSET 0x004
-#define CLAS_REVI_OFFSET 0x008
-#define HEAD_MLAT_CLSZ_OFFSET 0x00C
-#define MBAR_OFFSET 0x010
-#define MBARU_OFFSET 0x014
-// add more offsets
+
 
 #endif // TSI_STRUCT_H

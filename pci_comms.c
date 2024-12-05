@@ -5,12 +5,10 @@
 #include <sys/neutrino.h>
 #include <tsi_mapping.h>
 #include <string.h>
-#include <pci_comms.h>
 
 #define BASE_ADDRESS_L_OFFSET 0x10
 #define BASE_ADDRESS_H_OFFSET 0x14
 #define INTERRUPT_LINE_OFFSET 0x3C
-#define CRG_SIZE 0x1000
 
 int read_TSI148_pci_config(uint64_t *pci_config_base_address, uint8_t *pci_interrupt_line);
 
@@ -26,16 +24,16 @@ int main(void) {
     printf("Base Address: 0x%lX\n", pci_config_base_address);
     printf("Interrupt Line: %u\n", pci_interrupt_line);
 
-    // memory mapping test
-    // void *memory_mapped = map_tsi148_registers(pci_config_base_address, CRG_SIZE);
-    // if (!memory_mapped) {
-    //     printf("Failed to map memory\n");
-    //     return 1;
-    // }
-    // uint32_t *devi_veni = (uint32_t *)((uintptr_t)memory_mapped + DEVI_VENI_OFFSET)
-    // uint32_t value = read_register(devi_veni);
-    // printf("Read value from DEVI/VENI Register : 0x%08X\n", value);
-    // unmap_tsi148_registers(memory_mapped, CRG_SIZE);
+//     memory mapping test
+//     void *memory_mapped = map_tsi148_registers(pci_config_base_address, CRG_SIZE);
+//     if (!memory_mapped) {
+//         printf("Failed to map memory\n");
+//         return 1;
+//     }
+//     uint32_t *devi_veni = (uint32_t *)((uintptr_t)memory_mapped + DEVI_VENI_OFFSET);
+//     uint32_t value = read_register(devi_veni);
+//     printf("Read value from DEVI/VENI Register : 0x%08X\n", value);
+//     unmap_tsi148_registers(memory_mapped, CRG_SIZE);
 
     return EXIT_SUCCESS;
 }
@@ -43,9 +41,9 @@ int main(void) {
 /// @brief Read TSI148 PCI configuration, writes to pci_config_base_address and pci_interrupt_line.
 /// @param pci_config_base_address pointer to uint64_t variable to store base address
 /// @param pci_interrupt_line pointer to uint8_t variable to store interrupt line
-/// @return 
+/// @return
 int read_TSI148_pci_config(uint64_t *pci_config_base_address, uint8_t *pci_interrupt_line) {
-    
+
     int pidx; // PCI device index
     void *hdl; // PCI device handle
     int phdl; // PCI handle
@@ -78,12 +76,7 @@ int read_TSI148_pci_config(uint64_t *pci_config_base_address, uint8_t *pci_inter
         pci_detach(phdl);
         return EXIT_FAILURE;
     } else {
-        /* Do something to the adapter */
-//    	pci_read_config( hdl , 0x10h, 1, 64);
-        // reads base address from PCI configuration space
-    	pci_read_config32( inf.BusNumber, inf.DevFunc, 0x10, 1, &pci_config_base_buffL);
-    	pci_read_config32( inf.BusNumber, inf.DevFunc, 0x14, 1, &pci_config_base_buffH);
-      
+
         /* Read base address from PCI configuration space */
         pci_read_config32(inf.BusNumber, inf.DevFunc, BASE_ADDRESS_L_OFFSET, 1, &pci_config_base_buffL);
         pci_read_config32(inf.BusNumber, inf.DevFunc, BASE_ADDRESS_H_OFFSET, 1, &pci_config_base_buffH);
@@ -91,6 +84,7 @@ int read_TSI148_pci_config(uint64_t *pci_config_base_address, uint8_t *pci_inter
         pci_read_config8(inf.BusNumber, inf.DevFunc, INTERRUPT_LINE_OFFSET, 1, pci_interrupt_line);
 
         *pci_config_base_address = ((uint64_t)pci_config_base_buffH << 32) | pci_config_base_buffL;
+        *pci_config_base_address &= ~0xfff; // mask to match 4kB memory page
 
         pci_detach_device( hdl );
     }
