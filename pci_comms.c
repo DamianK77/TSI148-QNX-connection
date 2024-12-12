@@ -31,7 +31,7 @@ int main(void) {
     //     printf("Failed to map memory\n");
     //     return 1;
     // }
-    // register_info *reg_info = (register_info *)memory_mapped;
+    // struct register_info *reg_info = (struct register_info *)memory_mapped;
     // printf("Read value from VENI field : 0x%08X\n", reg_info->VENI);
     
     // unmap_tsi148_registers(memory_mapped, CRG_SIZE);
