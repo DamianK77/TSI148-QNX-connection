@@ -5,6 +5,7 @@
 #include <sys/neutrino.h>
 #include <tsi_mapping.h>
 #include <string.h>
+#include <tsi_struct.h>
 
 #define BASE_ADDRESS_L_OFFSET 0x10
 #define BASE_ADDRESS_H_OFFSET 0x14
@@ -24,16 +25,16 @@ int main(void) {
     printf("Base Address: 0x%lX\n", pci_config_base_address);
     printf("Interrupt Line: %u\n", pci_interrupt_line);
 
-//     memory mapping test
-//     void *memory_mapped = map_tsi148_registers(pci_config_base_address, CRG_SIZE);
-//     if (!memory_mapped) {
-//         printf("Failed to map memory\n");
-//         return 1;
-//     }
-//     uint32_t *devi_veni = (uint32_t *)((uintptr_t)memory_mapped + DEVI_VENI_OFFSET);
-//     uint32_t value = read_register(devi_veni);
-//     printf("Read value from DEVI/VENI Register : 0x%08X\n", value);
-//     unmap_tsi148_registers(memory_mapped, CRG_SIZE);
+    // //memory mapping test
+    // void *memory_mapped = map_tsi148_registers(pci_config_base_address, CRG_SIZE);
+    // if (!memory_mapped) {
+    //     printf("Failed to map memory\n");
+    //     return 1;
+    // }
+    // struct register_info *reg_info = (struct register_info *)memory_mapped;
+    // printf("Read value from VENI field : 0x%08X\n", reg_info->VENI);
+    
+    // unmap_tsi148_registers(memory_mapped, CRG_SIZE);
 
     return EXIT_SUCCESS;
 }
