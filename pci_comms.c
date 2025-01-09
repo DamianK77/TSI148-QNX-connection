@@ -6,14 +6,12 @@
 #include <tsi_mapping.h>
 #include <string.h>
 #include <tsi_struct.h>
+#include "pci_comms.h"
 
-#define BASE_ADDRESS_L_OFFSET 0x10
-#define BASE_ADDRESS_H_OFFSET 0x14
-#define INTERRUPT_LINE_OFFSET 0x3C
 
-int read_TSI148_pci_config(uint64_t *pci_config_base_address, uint8_t *pci_interrupt_line);
 
-int main(void) {
+
+struct register_info* TSI148_map_structure(struct register_info *reg_info) {
     uint64_t pci_config_base_address = 0;
     uint8_t pci_interrupt_line = 0;
 
@@ -25,18 +23,23 @@ int main(void) {
     printf("Base Address: 0x%lX\n", pci_config_base_address);
     printf("Interrupt Line: %u\n", pci_interrupt_line);
 
-    // //memory mapping test
-    // void *memory_mapped = map_tsi148_registers(pci_config_base_address, CRG_SIZE);
-    // if (!memory_mapped) {
-    //     printf("Failed to map memory\n");
-    //     return 1;
-    // }
+    //memory mapping test
+    void *memory_mapped = map_tsi148_registers(pci_config_base_address, CRG_SIZE);
+    if (!memory_mapped) {
+        printf("Failed to map memory\n");
+        return 1;
+    }
     // struct register_info *reg_info = (struct register_info *)memory_mapped;
-    // printf("Read value from VENI field : 0x%08X\n", reg_info->VENI);
-    
-    // unmap_tsi148_registers(memory_mapped, CRG_SIZE);
 
-    return EXIT_SUCCESS;
+    //printf("Read value from VENI field : 0x%08X\n", reg_info->VENI);
+     printf("Read value from VENI field : 0x%08X\n", ((struct register_info *)memory_mapped)->VENI);
+
+    // map the structure to the memory
+    return (struct register_info *)memory_mapped;
+
+
+    // unmap_tsi148_registers(memory_mapped, CRG_SIZE);
+    //return 0;
 }
 
 /// @brief Read TSI148 PCI configuration, writes to pci_config_base_address and pci_interrupt_line.

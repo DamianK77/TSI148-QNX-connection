@@ -1,7 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-
+#ifndef TSI_STRUCT_H
+#define TSI_STRUCT_H
 struct register_info {
 
     uint16_t VENI;    
@@ -358,3 +356,5 @@ struct register_info {
 
 
 };
+
+#endif /* TSI_STRUCT_H */
