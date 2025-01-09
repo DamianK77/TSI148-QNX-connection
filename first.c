@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/neutrino.h>
-#include <tsi_mapping.h>
+//#include <tsi_mapping.h>
 #include <string.h>
 //#include <tsi_struct.h>
 #include <pci_comms.h>

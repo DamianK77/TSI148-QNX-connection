@@ -3,10 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/neutrino.h>
-#include <tsi_mapping.h>
 #include <string.h>
 #include <tsi_struct.h>
 #include "pci_comms.h"
+
+#include <sys/mman.h>
+#include <stdint.h>
+#include <errno.h>
 
 
 
@@ -97,4 +100,46 @@ int read_TSI148_pci_config(uint64_t *pci_config_base_address, uint8_t *pci_inter
     pci_detach(phdl);
 
     return 0;
+}
+/**
+ * @brief Map Tsi148 registers into virtual memory.
+ * 
+ * @param base_address The physical base address of the register group.
+ * @param size The size of the memory region to map.
+ * @return void* Pointer to the mapped virtual memory, or NULL on failure.
+ */
+static inline void* map_tsi148_registers(uint64_t base_address, size_t size) {
+    // Ensure the thread has I/O privileges
+    if (ThreadCtl(_NTO_TCTL_IO, NULL) == -1) {
+        perror("ThreadCtl failed");
+        return NULL;
+    }
+
+    // Map the physical memory
+    void *mapped_base = mmap_device_memory(
+        NULL,                // Virtual address (NULL for auto)
+        size,                // Size of the memory block
+        PROT_READ | PROT_WRITE, // Read/Write permissions
+        MAP_SHARED,          // Shared mapping
+        base_address         // Physical address to map
+    );
+
+    if (mapped_base == MAP_FAILED) {
+        perror("mmap_device_memory failed");
+        return NULL;
+    }
+
+    return mapped_base;
+}
+
+/**
+ * @brief Unmap Tsi148 registers from virtual memory.
+ * 
+ * @param mapped_base Pointer to the mapped virtual memory.
+ * @param size The size of the memory region to unmap.
+ */
+static inline void unmap_tsi148_registers(void *mapped_base, size_t size) {
+    if (mapped_base) {
+        munmap(mapped_base, size);
+    }
 }
