@@ -13,7 +13,7 @@
 
 
 
-
+/// @brief Maps virtual memory into structure of registers.
 struct register_info* TSI148_map_structure(uint8_t *error) {
     uint64_t pci_config_base_address = 0;
     uint8_t pci_interrupt_line = 0;
@@ -36,17 +36,12 @@ struct register_info* TSI148_map_structure(uint8_t *error) {
         *error = 2;
         return 1;
     }
-//     struct register_info *reg_info = (struct register_info *)memory_mapped;
 
-    //printf("Read value from VENI field : 0x%08X\n", reg_info->VENI);
+    //prints value form VENI field to check if it is correct 
      printf("Read value from VENI field : 0x%08X\n", ((struct register_info *)memory_mapped)->VENI);
 
-    // map the structure to the memory
+    // map the memory to the structure
     return (struct register_info *)memory_mapped;
-
-
-    // unmap_tsi148_registers(memory_mapped, CRG_SIZE);
-    //return 0;
 }
 
 /// @brief Read TSI148 PCI configuration, writes to pci_config_base_address and pci_interrupt_line.
@@ -110,7 +105,7 @@ int read_TSI148_pci_config(uint64_t *pci_config_base_address, uint8_t *pci_inter
  * 
  * @param base_address The physical base address of the register group.
  * @param size The size of the memory region to map.
- * @return void* Pointer to the mapped virtual memory, or NULL on failure.
+ * @return uint64_t Address of mapped virtual memory, or NULL on failure.
  */
 uint64_t map_tsi148_registers(uint64_t base_address, size_t size) {
     // Ensure the thread has I/O privileges
@@ -134,16 +129,4 @@ uint64_t map_tsi148_registers(uint64_t base_address, size_t size) {
     }
 
     return mapped_base;
-}
-
-/**
- * @brief Unmap Tsi148 registers from virtual memory.
- * 
- * @param mapped_base Pointer to the mapped virtual memory.
- * @param size The size of the memory region to unmap.
- */
-static inline void unmap_tsi148_registers(void *mapped_base, size_t size) {
-    if (mapped_base) {
-        munmap(mapped_base, size);
-    }
 }
